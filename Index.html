@@ -1,0 +1,2578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>WeatherGPT — Premium Weather Dashboard</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* =========================================================
+       RESET
+    ========================================================= */
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(26, 174, 184, .10), transparent 25%),
+        radial-gradient(circle at 90% 5%, rgba(255, 177, 130, .12), transparent 25%),
+        #f7fafb;
+      color: #102331;
+      min-height: 100vh;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* =========================================================
+       VARIABLES
+    ========================================================= */
+
+    :root {
+      --primary: #079da8;
+      --primary-dark: #087d87;
+      --primary-light: #dff7f7;
+
+      --text: #102331;
+      --muted: #647685;
+
+      --border: rgba(17, 44, 60, .10);
+      --card: rgba(255, 255, 255, .88);
+
+      --shadow:
+        0 12px 35px rgba(18, 48, 62, .08);
+
+      --radius: 18px;
+    }
+
+    /* =========================================================
+       PAGE
+    ========================================================= */
+
+    .page {
+      width: min(1500px, calc(100% - 24px));
+      margin: 12px auto 30px;
+    }
+
+    /* =========================================================
+       NAVBAR
+    ========================================================= */
+
+    .navbar {
+      min-height: 66px;
+      padding: 0 18px;
+
+      display: flex;
+      align-items: center;
+      gap: 25px;
+
+      background: rgba(255, 255, 255, .82);
+      backdrop-filter: blur(18px);
+
+      border: 1px solid var(--border);
+      border-radius: 16px 16px 0 0;
+
+      position: sticky;
+      top: 10px;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+
+      font-weight: 700;
+      font-size: 16px;
+
+      white-space: nowrap;
+    }
+
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+
+      display: grid;
+      place-items: center;
+
+      color: white;
+      background: var(--primary);
+
+      border-radius: 8px;
+
+      transform: rotate(-5deg);
+    }
+
+    .logo-icon svg {
+      width: 17px;
+    }
+
+    .nav-links {
+      flex: 1;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      gap: 4px;
+    }
+
+    .nav-link {
+      border: 0;
+      background: transparent;
+
+      padding: 12px 13px;
+
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      color: #273c4b;
+      font-size: 11px;
+
+      border-bottom: 2px solid transparent;
+
+      transition: .2s;
+    }
+
+    .nav-link svg {
+      width: 13px;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--primary-dark);
+      border-bottom-color: var(--primary);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .language {
+      border: 1px solid var(--border);
+      background: white;
+      padding: 8px 10px;
+      border-radius: 9px;
+
+      font-size: 11px;
+    }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+
+      border-radius: 50%;
+      object-fit: cover;
+
+      border: 2px solid white;
+      box-shadow: 0 2px 8px rgba(0,0,0,.12);
+    }
+
+    /* =========================================================
+       HERO
+    ========================================================= */
+
+    .hero {
+      min-height: 415px;
+
+      position: relative;
+      overflow: hidden;
+
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+
+      background:
+        linear-gradient(
+          90deg,
+          rgba(255,255,255,.98) 0%,
+          rgba(255,255,255,.92) 46%,
+          rgba(255,255,255,.18) 100%
+        ),
+        url("https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1800&q=85")
+        center / cover;
+
+      border: 1px solid var(--border);
+      border-top: 0;
+      border-radius: 0 0 18px 18px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 390px;
+      height: 390px;
+
+      left: 260px;
+      top: 40px;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(100, 225, 231, .32),
+          rgba(255,255,255,0)
+        );
+
+      border-radius: 42% 58% 58% 42%;
+      transform: rotate(20deg);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+
+      padding: 65px 40px;
+    }
+
+    .eyebrow {
+      color: var(--primary-dark);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-size: clamp(42px, 5vw, 61px);
+      line-height: .98;
+      letter-spacing: -3px;
+
+      margin-bottom: 17px;
+    }
+
+    .hero-title span {
+      color: var(--primary);
+    }
+
+    .hero-subtitle {
+      color: #40596c;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    /* Search */
+
+    .search-box {
+      width: min(100%, 520px);
+      height: 44px;
+
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      padding: 0 13px;
+
+      background: rgba(255,255,255,.94);
+      border: 1px solid rgba(18,49,65,.14);
+
+      border-radius: 9px;
+
+      box-shadow: 0 8px 25px rgba(0,0,0,.04);
+    }
+
+    .search-box svg {
+      width: 16px;
+      color: #40596c;
+    }
+
+    .search-box input {
+      flex: 1;
+
+      border: 0;
+      outline: 0;
+
+      background: transparent;
+
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .search-box button {
+      border: 0;
+      background: transparent;
+    }
+
+    .location-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+
+      margin-top: 13px;
+    }
+
+    .location-tag {
+      border: 1px solid rgba(20,50,65,.06);
+
+      background: rgba(255,255,255,.75);
+
+      border-radius: 20px;
+      padding: 7px 10px;
+
+      font-size: 9px;
+      color: #354e5e;
+
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .location-tag svg {
+      width: 12px;
+    }
+
+    /* Main weather card */
+
+    .current-weather {
+      width: min(100%, 355px);
+
+      position: absolute;
+      z-index: 5;
+
+      right: 27%;
+      top: 47px;
+
+      padding: 25px 24px;
+
+      background: rgba(255,255,255,.88);
+      backdrop-filter: blur(22px);
+
+      border: 1px solid rgba(255,255,255,.9);
+      border-radius: 18px;
+
+      box-shadow:
+        0 20px 55px rgba(20,60,70,.13);
+    }
+
+    .weather-location {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      margin-bottom: 24px;
+    }
+
+    .weather-location svg {
+      width: 22px;
+    }
+
+    .weather-location strong {
+      font-size: 14px;
+      display: block;
+    }
+
+    .weather-location small {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .temperature-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .temperature {
+      font-size: 66px;
+      letter-spacing: -4px;
+      line-height: .9;
+    }
+
+    .temperature sup {
+      font-size: 28px;
+      vertical-align: top;
+      letter-spacing: -1px;
+    }
+
+    .weather-icon {
+      font-size: 47px;
+    }
+
+    .condition {
+      font-size: 15px;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    .feels {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .weather-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+
+      margin-top: 25px;
+      padding-top: 18px;
+
+      border-top: 1px solid var(--border);
+    }
+
+    .stat label {
+      display: block;
+      font-size: 8px;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .stat strong {
+      font-size: 11px;
+    }
+
+    .weather-date {
+      display: flex;
+      justify-content: space-between;
+
+      margin-top: 18px;
+      padding-top: 14px;
+
+      border-top: 1px solid var(--border);
+
+      font-size: 9px;
+      color: #465d6c;
+    }
+
+    /* =========================================================
+       CONTENT
+    ========================================================= */
+
+    .dashboard {
+      margin-top: 10px;
+
+      display: grid;
+      gap: 10px;
+    }
+
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+
+      border-radius: var(--radius);
+
+      box-shadow: var(--shadow);
+
+      overflow: hidden;
+    }
+
+    .section-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .07em;
+      color: var(--primary-dark);
+    }
+
+    .card-header {
+      padding: 17px 17px 10px;
+    }
+
+    /* =========================================================
+       HOURLY
+    ========================================================= */
+
+    .hourly {
+      padding-bottom: 12px;
+    }
+
+    .hourly-list {
+      display: flex;
+      gap: 7px;
+
+      padding: 0 10px 5px;
+
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .hourly-list::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hour {
+      min-width: 64px;
+
+      border: 1px solid rgba(20,50,65,.08);
+      background: rgba(255,255,255,.72);
+
+      border-radius: 10px;
+
+      padding: 10px 6px;
+
+      text-align: center;
+    }
+
+    .hour.active {
+      border-color: var(--primary);
+      box-shadow: inset 0 0 0 1px rgba(0,160,170,.1);
+    }
+
+    .hour-time {
+      font-size: 9px;
+      font-weight: 600;
+    }
+
+    .hour-icon {
+      font-size: 23px;
+      margin: 10px 0 6px;
+    }
+
+    .hour-temp {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .rain {
+      margin-top: 8px;
+      color: #078aa5;
+      font-size: 8px;
+    }
+
+    /* =========================================================
+       TWO COLUMN AREA
+    ========================================================= */
+
+    .two-column {
+      display: grid;
+      grid-template-columns: 2.2fr 1fr;
+      gap: 10px;
+    }
+
+    /* =========================================================
+       7 DAY
+    ========================================================= */
+
+    .daily {
+      padding-bottom: 13px;
+    }
+
+    .daily-list {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 7px;
+
+      padding: 0 10px;
+    }
+
+    .day {
+      text-align: center;
+
+      border: 1px solid rgba(20,50,65,.07);
+      border-radius: 10px;
+
+      padding: 10px 4px;
+
+      background: rgba(255,255,255,.55);
+    }
+
+    .day-name {
+      font-size: 9px;
+      font-weight: 600;
+    }
+
+    .day-date {
+      font-size: 7px;
+      color: #778895;
+      margin-top: 3px;
+    }
+
+    .day-icon {
+      font-size: 22px;
+      margin: 11px 0 7px;
+    }
+
+    .day-temp {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .day-low {
+      font-size: 9px;
+      color: #758591;
+      margin-top: 3px;
+    }
+
+    /* =========================================================
+       AQI
+    ========================================================= */
+
+    .aqi {
+      padding-bottom: 14px;
+    }
+
+    .aqi-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      padding: 4px 15px 0;
+    }
+
+    .gauge {
+      width: 120px;
+      height: 80px;
+
+      border-radius: 120px 120px 0 0;
+
+      background:
+        conic-gradient(
+          from 270deg,
+          #ffb529 0 25%,
+          #c7dc5d 25% 40%,
+          #e8edf0 40% 50%,
+          transparent 50%
+        );
+
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gauge::after {
+      content: "";
+
+      position: absolute;
+      inset: 12px 12px 0;
+
+      background: white;
+      border-radius: 100px 100px 0 0;
+    }
+
+    .aqi-number {
+      position: absolute;
+      z-index: 2;
+
+      left: 50%;
+      top: 45px;
+
+      transform: translate(-50%, -50%);
+
+      text-align: center;
+    }
+
+    .aqi-number strong {
+      font-size: 28px;
+      display: block;
+    }
+
+    .aqi-number small {
+      color: #15919b;
+      font-size: 8px;
+    }
+
+    .pollutants {
+      flex: 1;
+
+      display: grid;
+      gap: 7px;
+    }
+
+    .pollutant {
+      display: flex;
+      justify-content: space-between;
+
+      font-size: 9px;
+    }
+
+    .pollutant span:first-child {
+      color: #5e7280;
+    }
+
+    .aqi-note {
+      padding: 5px 16px 0;
+
+      color: #078b98;
+      font-size: 8px;
+    }
+
+    /* =========================================================
+       WEATHERGPT
+    ========================================================= */
+
+    .ai-grid {
+      display: grid;
+      grid-template-columns: 170px 1fr;
+    }
+
+    .ai-sidebar {
+      padding: 15px;
+
+      border-right: 1px solid var(--border);
+    }
+
+    .new-chat {
+      width: 100%;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      background: var(--primary);
+      color: white;
+
+      border: 0;
+      border-radius: 7px;
+
+      padding: 9px 10px;
+
+      font-size: 9px;
+    }
+
+    .suggested {
+      margin-top: 17px;
+
+      font-size: 8px;
+      color: #758692;
+    }
+
+    .suggestion {
+      display: block;
+      width: 100%;
+
+      text-align: left;
+
+      border: 0;
+      background: transparent;
+
+      padding: 7px 0;
+
+      color: #344d5c;
+      font-size: 8px;
+    }
+
+    .chat {
+      padding: 15px 17px;
+      min-height: 240px;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-message {
+      align-self: flex-end;
+
+      max-width: 65%;
+
+      background: #f0f3f5;
+
+      padding: 11px 13px;
+
+      border-radius: 9px;
+
+      font-size: 9px;
+    }
+
+    .assistant-row {
+      display: flex;
+      gap: 8px;
+
+      margin-top: 10px;
+    }
+
+    .bot-icon {
+      flex-shrink: 0;
+
+      width: 25px;
+      height: 25px;
+
+      display: grid;
+      place-items: center;
+
+      background: var(--primary-light);
+
+      border-radius: 50%;
+
+      color: var(--primary-dark);
+    }
+
+    .bot-icon svg {
+      width: 14px;
+    }
+
+    .assistant-message {
+      max-width: 75%;
+
+      padding: 12px;
+
+      background: #eaf8f9;
+
+      border-radius: 9px;
+
+      color: #274452;
+      font-size: 9px;
+      line-height: 1.6;
+    }
+
+    .chat-tags {
+      display: flex;
+      gap: 5px;
+
+      margin: 11px 0 8px 33px;
+    }
+
+    .chat-tag {
+      border: 1px solid #cde9eb;
+      background: white;
+
+      padding: 5px 8px;
+
+      border-radius: 20px;
+
+      color: #198b94;
+      font-size: 7px;
+    }
+
+    .chat-input {
+      margin-top: auto;
+
+      height: 38px;
+
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      border: 1px solid var(--border);
+      border-radius: 10px;
+
+      padding: 0 8px;
+    }
+
+    .chat-input input {
+      flex: 1;
+      border: 0;
+      outline: 0;
+
+      font-size: 9px;
+    }
+
+    .chat-input button {
+      border: 0;
+      background: transparent;
+    }
+
+    .send-button {
+      width: 26px;
+      height: 26px;
+
+      border-radius: 50% !important;
+
+      color: white;
+      background: var(--primary) !important;
+    }
+
+    .send-button svg {
+      width: 12px;
+    }
+
+    /* =========================================================
+       SUNRISE
+    ========================================================= */
+
+    .sun-card {
+      padding-bottom: 20px;
+    }
+
+    .sun-visual {
+      height: 145px;
+
+      margin: 0 18px;
+
+      position: relative;
+
+      border-bottom: 1px solid #d8e0e4;
+      overflow: hidden;
+    }
+
+    .sun-arc {
+      width: 200px;
+      height: 100px;
+
+      border: 1px solid #ffae23;
+      border-bottom: 0;
+
+      border-radius: 200px 200px 0 0;
+
+      position: absolute;
+
+      left: 50%;
+      bottom: 5px;
+
+      transform: translateX(-50%);
+    }
+
+    .sunrise-dot,
+    .sunset-dot {
+      position: absolute;
+      bottom: -5px;
+
+      width: 30px;
+      height: 30px;
+
+      display: grid;
+      place-items: center;
+
+      color: #ff9d17;
+    }
+
+    .sunrise-dot {
+      left: 5%;
+    }
+
+    .sunset-dot {
+      right: 5%;
+    }
+
+    .sun-times {
+      display: flex;
+      justify-content: space-between;
+
+      padding: 12px 18px 0;
+    }
+
+    .sun-time strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    .sun-time span {
+      font-size: 8px;
+      color: #607481;
+    }
+
+    .daylight {
+      display: flex;
+      justify-content: space-between;
+
+      padding: 17px 18px 0;
+
+      font-size: 9px;
+    }
+
+    .daylight strong {
+      font-size: 11px;
+    }
+
+    /* =========================================================
+       FEATURE CARDS
+    ========================================================= */
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+
+      gap: 7px;
+    }
+
+    .feature-card {
+      min-height: 160px;
+
+      position: relative;
+      overflow: hidden;
+
+      border-radius: 6px;
+
+      padding: 18px;
+
+      color: white;
+
+      background-size: cover;
+      background-position: center;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .feature-card::before {
+      content: "";
+
+      position: absolute;
+      inset: 0;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(4,27,39,.75),
+          rgba(5,36,49,.25)
+        );
+    }
+
+    .feature-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .feature-number {
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: .08em;
+
+      margin-bottom: 14px;
+    }
+
+    .feature-card h3 {
+      font-size: 12px;
+      margin-bottom: 9px;
+    }
+
+    .feature-card p {
+      max-width: 190px;
+
+      font-size: 9px;
+      line-height: 1.55;
+
+      color: rgba(255,255,255,.9);
+    }
+
+    .feature-button {
+      position: relative;
+      z-index: 2;
+
+      align-self: flex-start;
+
+      border: 0;
+      background: rgba(0,168,180,.82);
+      color: white;
+
+      padding: 7px 11px;
+
+      border-radius: 5px;
+
+      font-size: 8px;
+    }
+
+    /* Backgrounds */
+
+    .storm {
+      background-image:
+        url("https://images.unsplash.com/photo-1493246507139-91e8fad9978e?auto=format&fit=crop&w=900&q=80");
+    }
+
+    .alerts {
+      background-image:
+        url("https://images.unsplash.com/photo-1605727216801-e27ce1d0cc28?auto=format&fit=crop&w=900&q=80");
+    }
+
+    .education {
+      background-image:
+        url("https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=80");
+    }
+
+    .farmers {
+      background-image:
+        url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=80");
+    }
+
+    .travellers {
+      background-image:
+        url("https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=80");
+    }
+
+    .wellness {
+      background-image:
+        url("https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80");
+    }
+
+    .saved {
+      background-image:
+        url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80");
+    }
+
+    .settings {
+      background-image:
+        url("https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=900&q=80");
+    }
+
+    /* =========================================================
+       BOTTOM FEATURES
+    ========================================================= */
+
+    .benefits {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+
+      margin-top: 12px;
+
+      background: rgba(255,255,255,.72);
+
+      border-radius: 15px;
+
+      border: 1px solid var(--border);
+    }
+
+    .benefit {
+      display: flex;
+      gap: 12px;
+
+      padding: 20px;
+
+      border-right: 1px solid var(--border);
+    }
+
+    .benefit:last-child {
+      border-right: 0;
+    }
+
+    .benefit-icon {
+      width: 42px;
+      height: 42px;
+
+      flex-shrink: 0;
+
+      display: grid;
+      place-items: center;
+
+      color: var(--primary-dark);
+
+      border: 1px solid #cce9eb;
+      border-radius: 50%;
+    }
+
+    .benefit-icon svg {
+      width: 22px;
+    }
+
+    .benefit h4 {
+      color: var(--primary-dark);
+      font-size: 9px;
+      margin-bottom: 7px;
+    }
+
+    .benefit p {
+      font-size: 8px;
+      line-height: 1.55;
+      color: #526876;
+    }
+
+    /* =========================================================
+       TOAST
+    ========================================================= */
+
+    .toast {
+      position: fixed;
+
+      bottom: 25px;
+      left: 50%;
+
+      transform: translate(-50%, 100px);
+
+      background: #102c39;
+      color: white;
+
+      padding: 12px 18px;
+
+      border-radius: 9px;
+
+      font-size: 11px;
+
+      opacity: 0;
+
+      transition: .3s;
+
+      z-index: 999;
+    }
+
+    .toast.show {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+
+    /* =========================================================
+       MOBILE NAV
+    ========================================================= */
+
+    .mobile-menu {
+      display: none;
+
+      border: 0;
+      background: transparent;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 1100px) {
+
+      .nav-links {
+        gap: 0;
+      }
+
+      .nav-link {
+        padding: 10px 7px;
+        font-size: 9px;
+      }
+
+      .current-weather {
+        right: 6%;
+      }
+
+      .feature-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 850px) {
+
+      .navbar {
+        position: relative;
+      }
+
+      .mobile-menu {
+        display: block;
+        margin-left: auto;
+      }
+
+      .nav-links {
+        display: none;
+
+        position: absolute;
+
+        left: 10px;
+        right: 10px;
+        top: 65px;
+
+        padding: 8px;
+
+        background: white;
+
+        border: 1px solid var(--border);
+        border-radius: 12px;
+
+        box-shadow: var(--shadow);
+
+        flex-direction: column;
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-link {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: 720px;
+
+        background-position: 65% center;
+      }
+
+      .hero-content {
+        padding: 45px 25px;
+      }
+
+      .current-weather {
+        position: absolute;
+
+        left: 25px;
+        right: 25px;
+
+        top: auto;
+        bottom: 25px;
+
+        width: auto;
+      }
+
+      .two-column {
+        grid-template-columns: 1fr;
+      }
+
+      .daily-list {
+        overflow-x: auto;
+        grid-template-columns: repeat(7, minmax(80px, 1fr));
+      }
+
+      .ai-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ai-sidebar {
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .benefits {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .benefit:nth-child(2) {
+        border-right: 0;
+      }
+    }
+
+    @media (max-width: 550px) {
+
+      .page {
+        width: calc(100% - 10px);
+        margin: 5px auto;
+      }
+
+      .nav-right {
+        gap: 4px;
+      }
+
+      .language {
+        display: none;
+      }
+
+      .hero {
+        min-height: 690px;
+      }
+
+      .hero-title {
+        font-size: 43px;
+      }
+
+      .hero-content {
+        padding: 35px 20px;
+      }
+
+      .current-weather {
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+
+        padding: 20px;
+      }
+
+      .temperature {
+        font-size: 55px;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .benefits {
+        grid-template-columns: 1fr;
+      }
+
+      .benefit {
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .benefit:last-child {
+        border-bottom: 0;
+      }
+
+      .aqi-content {
+        flex-direction: column;
+      }
+
+      .gauge {
+        align-self: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <!-- =======================================================
+       NAVIGATION
+  ======================================================== -->
+
+  <nav class="navbar">
+
+    <div class="logo">
+      <div class="logo-icon">
+        <i data-lucide="cloud-sun"></i>
+      </div>
+      WeatherGPT
+    </div>
+
+    <div class="nav-links" id="navLinks">
+
+      <button class="nav-link active">
+        <i data-lucide="house"></i>
+        Home
+      </button>
+
+      <button class="nav-link">
+        <i data-lucide="cloud-sun"></i>
+        Forecast
+      </button>
+
+      <button class="nav-link">
+        <i data-lucide="bot"></i>
+        WeatherGPT
+      </button>
+
+      <button class="nav-link">
+        <i data-lucide="bell"></i>
+        Alerts
+      </button>
+
+      <button class="nav-link">
+        <i data-lucide="bookmark"></i>
+        Saved
+      </button>
+
+      <button class="nav-link">
+        <i data-lucide="book-open"></i>
+        Education
+      </button>
+
+      <button class="nav-link">
+        <i data-lucide="wheat"></i>
+        Farmers
+      </button>
+
+      <button class="nav-link">
+        <i data-lucide="plane"></i>
+        Travellers
+      </button>
+
+      <button class="nav-link">
+        <i data-lucide="heart-pulse"></i>
+        Wellness
+      </button>
+
+      <button class="nav-link">
+        <i data-lucide="settings"></i>
+        Settings
+      </button>
+
+    </div>
+
+    <div class="nav-right">
+      <button class="language">EN ▾</button>
+
+      <img
+        class="avatar"
+        src="https://i.pravatar.cc/100?img=12"
+        alt="User"
+      >
+
+      <button class="mobile-menu" id="menuButton">
+        <i data-lucide="menu"></i>
+      </button>
+    </div>
+
+  </nav>
+
+
+  <!-- =======================================================
+       HERO
+  ======================================================== -->
+
+  <section class="hero">
+
+    <div class="hero-content">
+
+      <div class="eyebrow">
+        01 / YOUR CONDITIONS
+      </div>
+
+      <h1 class="hero-title">
+        Know the sky.<br>
+        <span>Make your move.</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Real-time weather. Real-world decisions.
+      </p>
+
+      <form class="search-box" id="searchForm">
+
+        <i data-lucide="search"></i>
+
+        <input
+          id="cityInput"
+          type="text"
+          placeholder="Search for city, locality, or landmark..."
+        >
+
+        <button type="submit">
+          <i data-lucide="settings-2"></i>
+        </button>
+
+      </form>
+
+      <div class="location-tags">
+
+        <button class="location-tag" onclick="showToast('Using your current location')">
+          <i data-lucide="navigation"></i>
+          Current Location
+        </button>
+
+        <button class="location-tag">
+          <i data-lucide="map-pin"></i>
+          Kolkata, West Bengal
+        </button>
+
+        <button class="location-tag">
+          <i data-lucide="map-pin"></i>
+          Darjeeling ⭐
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- Current weather -->
+
+    <div class="current-weather">
+
+      <div class="weather-location">
+
+        <i data-lucide="map-pin"></i>
+
+        <div>
+          <strong id="locationName">
+            Kolkata, West Bengal
+          </strong>
+
+          <small>India</small>
+        </div>
+
+      </div>
+
+
+      <div class="temperature-row">
+
+        <div class="temperature">
+          <span id="temperature">28</span><sup>°C</sup>
+        </div>
+
+        <div class="weather-icon">
+          🌤️
+        </div>
+
+      </div>
+
+      <div class="condition">
+        Partly Cloudy
+      </div>
+
+      <div class="feels">
+        Feels like 31°C
+      </div>
+
+
+      <div class="weather-stats">
+
+        <div class="stat">
+          <label>Humidity</label>
+          <strong>72%</strong>
+        </div>
+
+        <div class="stat">
+          <label>Wind</label>
+          <strong>↗ 14 km/h</strong>
+        </div>
+
+        <div class="stat">
+          <label>Pressure</label>
+          <strong>1012 hPa</strong>
+        </div>
+
+        <div class="stat">
+          <label>Visibility</label>
+          <strong>8 km</strong>
+        </div>
+
+      </div>
+
+
+      <div class="weather-date">
+        <span>Mon, 26 May 2025</span>
+        <strong>04:35 PM</strong>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =======================================================
+       DASHBOARD
+  ======================================================== -->
+
+  <main class="dashboard">
+
+
+    <!-- HOURLY -->
+
+    <section class="section-card hourly">
+
+      <div class="card-header">
+        <div class="section-label">
+          02 / HOURLY FORECAST
+        </div>
+      </div>
+
+      <div class="hourly-list">
+
+        <div class="hour active">
+          <div class="hour-time">Now</div>
+          <div class="hour-icon">🌤️</div>
+          <div class="hour-temp">28°</div>
+          <div class="rain">↓ 20%</div>
+        </div>
+
+        <div class="hour">
+          <div class="hour-time">5 PM</div>
+          <div class="hour-icon">🌤️</div>
+          <div class="hour-temp">27°</div>
+          <div class="rain">↓ 20%</div>
+        </div>
+
+        <div class="hour">
+          <div class="hour-time">6 PM</div>
+          <div class="hour-icon">🌤️</div>
+          <div class="hour-temp">27°</div>
+          <div class="rain">↓ 20%</div>
+        </div>
+
+        <div class="hour">
+          <div class="hour-time">7 PM</div>
+          <div class="hour-icon">🌤️</div>
+          <div class="hour-temp">26°</div>
+          <div class="rain">↓ 10%</div>
+        </div>
+
+        <div class="hour">
+          <div class="hour-time">8 PM</div>
+          <div class="hour-icon">🌙</div>
+          <div class="hour-temp">25°</div>
+          <div class="rain">↓ 10%</div>
+        </div>
+
+        <div class="hour">
+          <div class="hour-time">9 PM</div>
+          <div class="hour-icon">🌙</div>
+          <div class="hour-temp">24°</div>
+          <div class="rain">↓ 10%</div>
+        </div>
+
+        <div class="hour">
+          <div class="hour-time">10 PM</div>
+          <div class="hour-icon">🌙</div>
+          <div class="hour-temp">24°</div>
+          <div class="rain">↓ 10%</div>
+        </div>
+
+        <div class="hour">
+          <div class="hour-time">11 PM</div>
+          <div class="hour-icon">🌙</div>
+          <div class="hour-temp">23°</div>
+          <div class="rain">↓ 10%</div>
+        </div>
+
+        <div class="hour">
+          <div class="hour-time">12 AM</div>
+          <div class="hour-icon">🌙</div>
+          <div class="hour-temp">23°</div>
+          <div class="rain">↓ 0%</div>
+        </div>
+
+        <div class="hour">
+          <div class="hour-time">1 AM</div>
+          <div class="hour-icon">🌙</div>
+          <div class="hour-temp">23°</div>
+          <div class="rain">↓ 0%</div>
+        </div>
+
+        <div class="hour">
+          <div class="hour-time">2 AM</div>
+          <div class="hour-icon">🌙</div>
+          <div class="hour-temp">22°</div>
+          <div class="rain">↓ 0%</div>
+        </div>
+
+        <div class="hour">
+          <div class="hour-time">3 AM</div>
+          <div class="hour-icon">🌙</div>
+          <div class="hour-temp">22°</div>
+          <div class="rain">↓ 0%</div>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- DAILY + AQI -->
+
+    <div class="two-column">
+
+      <!-- 7 DAY -->
+
+      <section class="section-card daily">
+
+        <div class="card-header">
+          <div class="section-label">
+            03 / 7-DAY FORECAST
+          </div>
+        </div>
+
+        <div class="daily-list">
+
+          <div class="day">
+            <div class="day-name">Mon</div>
+            <div class="day-date">26 May</div>
+            <div class="day-icon">🌤️</div>
+            <div class="day-temp">30°</div>
+            <div class="day-low">22°</div>
+            <div class="rain">↘ 40%</div>
+          </div>
+
+          <div class="day">
+            <div class="day-name">Tue</div>
+            <div class="day-date">27 May</div>
+            <div class="day-icon">🌧️</div>
+            <div class="day-temp">31°</div>
+            <div class="day-low">23°</div>
+            <div class="rain">↘ 60%</div>
+          </div>
+
+          <div class="day">
+            <div class="day-name">Wed</div>
+            <div class="day-date">28 May</div>
+            <div class="day-icon">🌤️</div>
+            <div class="day-temp">32°</div>
+            <div class="day-low">24°</div>
+            <div class="rain">↘ 40%</div>
+          </div>
+
+          <div class="day">
+            <div class="day-name">Thu</div>
+            <div class="day-date">29 May</div>
+            <div class="day-icon">🌤️</div>
+            <div class="day-temp">31°</div>
+            <div class="day-low">23°</div>
+            <div class="rain">↘ 30%</div>
+          </div>
+
+          <div class="day">
+            <div class="day-name">Fri</div>
+            <div class="day-date">30 May</div>
+            <div class="day-icon">☀️</div>
+            <div class="day-temp">30°</div>
+            <div class="day-low">22°</div>
+            <div class="rain">↘ 20%</div>
+          </div>
+
+          <div class="day">
+            <div class="day-name">Sat</div>
+            <div class="day-date">31 May</div>
+            <div class="day-icon">🌤️</div>
+            <div class="day-temp">29°</div>
+            <div class="day-low">21°</div>
+            <div class="rain">↘ 20%</div>
+          </div>
+
+          <div class="day">
+            <div class="day-name">Sun</div>
+            <div class="day-date">01 Jun</div>
+            <div class="day-icon">🌤️</div>
+            <div class="day-temp">29°</div>
+            <div class="day-low">21°</div>
+            <div class="rain">↘ 10%</div>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- AQI -->
+
+      <section class="section-card aqi">
+
+        <div class="card-header">
+          <div class="section-label">
+            04 / AIR QUALITY
+          </div>
+        </div>
+
+        <div class="aqi-content">
+
+          <div class="gauge">
+
+            <div class="aqi-number">
+              <strong>68</strong>
+              <small>Moderate</small>
+            </div>
+
+          </div>
+
+          <div class="pollutants">
+
+            <div class="pollutant">
+              <span>PM2.5</span>
+              <strong>38</strong>
+            </div>
+
+            <div class="pollutant">
+              <span>PM10</span>
+              <strong>56</strong>
+            </div>
+
+            <div class="pollutant">
+              <span>O3</span>
+              <strong>72</strong>
+            </div>
+
+            <div class="pollutant">
+              <span>NO2</span>
+              <strong>18</strong>
+            </div>
+
+            <div class="pollutant">
+              <span>SO2</span>
+              <strong>12</strong>
+            </div>
+
+            <div class="pollutant">
+              <span>CO</span>
+              <strong>0.4</strong>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="aqi-note">
+          Air quality is acceptable for most people.
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <!-- AI + SUN -->
+
+    <div class="two-column">
+
+      <!-- WEATHERGPT -->
+
+      <section class="section-card">
+
+        <div class="card-header">
+          <div class="section-label">
+            05 / WEATHERGPT
+          </div>
+        </div>
+
+        <div class="ai-grid">
+
+          <aside class="ai-sidebar">
+
+            <button
+              class="new-chat"
+              onclick="showToast('New WeatherGPT chat started')"
+            >
+              + New Chat
+              <span>⌄</span>
+            </button>
+
+            <div class="suggested">
+              Suggested
+            </div>
+
+            <button class="suggestion">
+              ◉ Will it rain tomorrow?
+            </button>
+
+            <button class="suggestion">
+              ◉ Should I carry an umbrella?
+            </button>
+
+            <button class="suggestion">
+              ◉ What will be the temperature?
+            </button>
+
+            <button class="suggestion">
+              ◉ Is it good time to travel?
+            </button>
+
+            <button class="suggestion">
+              ◉ Explain today's weather
+            </button>
+
+            <button class="suggestion">
+              ◉ What should I wear today?
+            </button>
+
+          </aside>
+
+
+          <div class="chat">
+
+            <div class="user-message">
+              Will it rain tomorrow in Kolkata?
+            </div>
+
+            <div class="assistant-row">
+
+              <div class="bot-icon">
+                <i data-lucide="bot"></i>
+              </div>
+
+              <div class="assistant-message">
+                Yes, there is a high chance of rain tomorrow in
+                Kolkata. According to the forecast, there is a
+                60% probability of rainfall with moderate intensity
+                during the afternoon and evening. The temperature
+                will range between 24°C and 31°C. Carry an umbrella
+                and stay safe!
+              </div>
+
+            </div>
+
+
+            <div class="chat-tags">
+
+              <button class="chat-tag">Details</button>
+              <button class="chat-tag">Hourly Forecast</button>
+              <button class="chat-tag">7-Day Forecast</button>
+              <button class="chat-tag">Alerts</button>
+
+            </div>
+
+
+            <form class="chat-input" id="chatForm">
+
+              <input
+                id="chatMessage"
+                type="text"
+                placeholder="Ask WeatherGPT something..."
+              >
+
+              <button type="button">
+                <i data-lucide="mic"></i>
+              </button>
+
+              <button type="button">
+                <i data-lucide="image"></i>
+              </button>
+
+              <button type="button">
+                <i data-lucide="paperclip"></i>
+              </button>
+
+              <button
+                type="submit"
+                class="send-button"
+              >
+                <i data-lucide="arrow-right"></i>
+              </button>
+
+            </form>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- SUNRISE -->
+
+      <section class="section-card sun-card">
+
+        <div class="card-header">
+          <div class="section-label">
+            06 / SUNRISE & SUNSET
+          </div>
+        </div>
+
+        <div class="sun-visual">
+
+          <div class="sun-arc"></div>
+
+          <div class="sunrise-dot">
+            ☀️
+          </div>
+
+          <div class="sunset-dot">
+            🌅
+          </div>
+
+        </div>
+
+        <div class="sun-times">
+
+          <div class="sun-time">
+            <strong>05:02 AM</strong>
+            <span>Sunrise</span>
+          </div>
+
+          <div class="sun-time" style="text-align:right">
+            <strong>06:24 PM</strong>
+            <span>Sunset</span>
+          </div>
+
+        </div>
+
+        <div class="daylight">
+          <span>Daylight</span>
+          <strong>13h 22m</strong>
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <!-- =======================================================
+         FEATURE CARDS
+    ======================================================== -->
+
+    <section class="feature-grid">
+
+      <article class="feature-card storm">
+        <div class="feature-content">
+          <div class="feature-number">07 / DETAILED FORECAST</div>
+
+          <h3>Explore weather in detail</h3>
+
+          <p>
+            Explore temperature, wind, humidity, UV index and
+            more in detail with interactive charts and graphs.
+          </p>
+        </div>
+
+        <button
+          class="feature-button"
+          onclick="showToast('Opening detailed forecast')"
+        >
+          Explore
+        </button>
+      </article>
+
+
+      <article class="feature-card alerts">
+
+        <div class="feature-content">
+
+          <div class="feature-number">
+            08 / ALERTS
+          </div>
+
+          <h3>Stay ahead of weather</h3>
+
+          <p>
+            Stay ahead with real-time weather alerts and severe
+            weather warnings.
+          </p>
+
+        </div>
+
+        <button
+          class="feature-button"
+          onclick="showToast('Opening weather alerts')"
+        >
+          View Alerts
+        </button>
+
+      </article>
+
+
+      <article class="feature-card education">
+
+        <div class="feature-content">
+
+          <div class="feature-number">
+            09 / EDUCATION
+          </div>
+
+          <h3>Learn about weather</h3>
+
+          <p>
+            Learn weather, climate, atmosphere and more with
+            interactive lessons, quizzes and AI chat.
+          </p>
+
+        </div>
+
+        <button
+          class="feature-button"
+          onclick="showToast('Opening Weather Education')"
+        >
+          Start Learning
+        </button>
+
+      </article>
+
+
+      <article class="feature-card farmers">
+
+        <div class="feature-content">
+
+          <div class="feature-number">
+            10 / FARMERS
+          </div>
+
+          <h3>Weather intelligence for farms</h3>
+
+          <p>
+            Weather intelligence for farmers. Plan irrigation,
+            sowing, spraying and field activities better.
+          </p>
+
+        </div>
+
+        <button
+          class="feature-button"
+          onclick="showToast('Opening Farmers dashboard')"
+        >
+          Go to Farmers
+        </button>
+
+      </article>
+
+
+      <article class="feature-card travellers">
+
+        <div class="feature-content">
+
+          <div class="feature-number">
+            11 / TRAVELLERS
+          </div>
+
+          <h3>Travel smarter</h3>
+
+          <p>
+            Check destination weather, packing suggestions,
+            travel comfort and more with AI assistant.
+          </p>
+
+        </div>
+
+        <button
+          class="feature-button"
+          onclick="showToast('Opening travel planner')"
+        >
+          Plan Your Trip
+        </button>
+
+      </article>
+
+
+      <article class="feature-card wellness">
+
+        <div class="feature-content">
+
+          <div class="feature-number">
+            12 / WELLNESS
+          </div>
+
+          <h3>Weather-aware wellness</h3>
+
+          <p>
+            Weather-aware wellness tips for hydration, heat,
+            humidity, sleep and outdoor activity.
+          </p>
+
+        </div>
+
+        <button
+          class="feature-button"
+          onclick="showToast('Opening wellness tips')"
+        >
+          Wellness Tips
+        </button>
+
+      </article>
+
+
+      <article class="feature-card saved">
+
+        <div class="feature-content">
+
+          <div class="feature-number">
+            13 / SAVED PLACES
+          </div>
+
+          <h3>Save your favorite places</h3>
+
+          <p>
+            Save your favorite places and track their weather
+            anytime, anywhere.
+          </p>
+
+        </div>
+
+        <button
+          class="feature-button"
+          onclick="showToast('Opening saved locations')"
+        >
+          View Saved
+        </button>
+
+      </article>
+
+
+      <article class="feature-card settings">
+
+        <div class="feature-content">
+
+          <div class="feature-number">
+            14 / SETTINGS
+          </div>
+
+          <h3>Make it yours</h3>
+
+          <p>
+            Customize language, units, appearance, notifications
+            and privacy settings.
+          </p>
+
+        </div>
+
+        <button
+          class="feature-button"
+          onclick="showToast('Opening settings')"
+        >
+          Open Settings
+        </button>
+
+      </article>
+
+    </section>
+
+
+    <!-- =======================================================
+         BENEFITS
+    ======================================================== -->
+
+    <section class="benefits">
+
+      <article class="benefit">
+
+        <div class="benefit-icon">
+          <i data-lucide="globe"></i>
+        </div>
+
+        <div>
+          <h4>MULTILINGUAL SUPPORT</h4>
+
+          <p>
+            Auto-detects your language and supports 50+
+            languages including Hinglish, Banglish and more.
+          </p>
+        </div>
+
+      </article>
+
+
+      <article class="benefit">
+
+        <div class="benefit-icon">
+          <i data-lucide="mic"></i>
+        </div>
+
+        <div>
+          <h4>VOICE, IMAGE & FILE</h4>
+
+          <p>
+            Talk, upload images, attach files and chat naturally
+            with WeatherGPT.
+          </p>
+        </div>
+
+      </article>
+
+
+      <article class="benefit">
+
+        <div class="benefit-icon">
+          <i data-lucide="shield-check"></i>
+        </div>
+
+        <div>
+          <h4>ACCURATE SOURCES</h4>
+
+          <p>
+            Powered by OpenWeatherMap, WeatherAPI.com and
+            Groq AI for reliable information.
+          </p>
+        </div>
+
+      </article>
+
+
+      <article class="benefit">
+
+        <div class="benefit-icon">
+          <i data-lucide="heart"></i>
+        </div>
+
+        <div>
+          <h4>BUILT FOR YOU</h4>
+
+          <p>
+            For students, farmers, travellers, professionals
+            and everyone who looks up to the sky.
+          </p>
+        </div>
+
+      </article>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<!-- Toast -->
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+
+  /* =========================================================
+     INITIALIZE ICONS
+  ========================================================= */
+
+  lucide.createIcons();
+
+
+  /* =========================================================
+     MOBILE MENU
+  ========================================================= */
+
+  const menuButton = document.getElementById("menuButton");
+  const navLinks = document.getElementById("navLinks");
+
+  menuButton.addEventListener("click", () => {
+
+    navLinks.classList.toggle("open");
+
+  });
+
+
+  /* =========================================================
+     NAVIGATION
+  ========================================================= */
+
+  document.querySelectorAll(".nav-link").forEach(link => {
+
+    link.addEventListener("click", () => {
+
+      document.querySelectorAll(".nav-link")
+        .forEach(item => item.classList.remove("active"));
+
+      link.classList.add("active");
+
+      showToast(`${link.textContent.trim()} selected`);
+
+      navLinks.classList.remove("open");
+
+    });
+
+  });
+
+
+  /* =========================================================
+     TOAST
+  ========================================================= */
+
+  function showToast(message) {
+
+    const toast = document.getElementById("toast");
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    clearTimeout(window.toastTimer);
+
+    window.toastTimer = setTimeout(() => {
+
+      toast.classList.remove("show");
+
+    }, 2200);
+
+  }
+
+
+  /* =========================================================
+     CITY SEARCH
+  ========================================================= */
+
+  const searchForm = document.getElementById("searchForm");
+  const cityInput = document.getElementById("cityInput");
+
+  searchForm.addEventListener("submit", event => {
+
+    event.preventDefault();
+
+    const city = cityInput.value.trim();
+
+    if (!city) {
+
+      showToast("Please enter a city");
+
+      return;
+
+    }
+
+    document.getElementById("locationName").textContent = city;
+
+    showToast(`Weather updated for ${city}`);
+
+    cityInput.value = "";
+
+  });
+
+
+  /* =========================================================
+     WEATHERGPT CHAT
+  ========================================================= */
+
+  const chatForm = document.getElementById("chatForm");
+  const chatMessage = document.getElementById("chatMessage");
+  const chat = document.querySelector(".chat");
+
+  chatForm.addEventListener("submit", event => {
+
+    event.preventDefault();
+
+    const message = chatMessage.value.trim();
+
+    if (!message) return;
+
+
+    // User message
+
+    const userMessage = document.createElement("div");
+
+    userMessage.className = "user-message";
+
+    userMessage.textContent = message;
+
+    chat.insertBefore(
+      userMessage,
+      chatForm
+    );
+
+
+    // Fake AI response
+
+    setTimeout(() => {
+
+      const assistantRow = document.createElement("div");
+
+      assistantRow.className = "assistant-row";
+
+      assistantRow.innerHTML = `
+
+        <div class="bot-icon">
+          <i data-lucide="bot"></i>
+        </div>
+
+        <div class="assistant-message">
+          Based on the current forecast, conditions look
+          generally manageable. For a more accurate answer,
+          connect this interface to your preferred weather API.
+        </div>
+
+      `;
+
+      chat.insertBefore(
+        assistantRow,
+        chatForm
+      );
+
+      lucide.createIcons();
+
+      chat.scrollTop = chat.scrollHeight;
+
+    }, 600);
+
+
+    chatMessage.value = "";
+
+  });
+
+
+  /* =========================================================
+     HOURLY CARD INTERACTION
+  ========================================================= */
+
+  document.querySelectorAll(".hour").forEach(hour => {
+
+    hour.addEventListener("click", () => {
+
+      document.querySelectorAll(".hour")
+        .forEach(item => item.classList.remove("active"));
+
+      hour.classList.add("active");
+
+    });
+
+  });
+
+
+  /* =========================================================
+     LOCATION TAGS
+  ========================================================= */
+
+  document.querySelectorAll(".location-tag").forEach(tag => {
+
+    tag.addEventListener("click", () => {
+
+      const text = tag.textContent.trim();
+
+      if (
+        text.includes("Kolkata") ||
+        text.includes("Darjeeling")
+      ) {
+
+        document.getElementById("locationName")
+          .textContent = text.replace("⭐", "").trim();
+
+        showToast(`Showing weather for ${text}`);
+
+      }
+
+    });
+
+  });
+
+</script>
+
+</body>
+</html>
