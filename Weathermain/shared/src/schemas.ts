@@ -81,7 +81,8 @@ export const geocodeMatchSchema = z.object({
 });
 
 export const airQualitySchema = z.object({
-  aqi: z.number().int().min(0).max(5),
+  // AQI uses the US EPA 0-500 scale across providers.
+  aqi: z.number().int().min(0).max(500),
   pollutant: z.string(),
   pm25: z.number(),
   pm10: z.number(),

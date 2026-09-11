@@ -13,8 +13,6 @@ const EducationPage = lazy(() => import("@/pages/EducationPage").then((module) =
 const FarmersPage = lazy(() => import("@/pages/FarmersPage").then((module) => ({ default: module.FarmersPage })));
 const TravellersPage = lazy(() => import("@/pages/TravellersPage").then((module) => ({ default: module.TravellersPage })));
 const HealthPage = lazy(() => import("@/pages/HealthPage").then((module) => ({ default: module.HealthPage })));
-const CameraPage = lazy(() => import("@/pages/CameraPage").then((module) => ({ default: module.CameraPage })));
-const FilesPage = lazy(() => import("@/pages/FilesPage").then((module) => ({ default: module.FilesPage })));
 const SettingsPage = lazy(() => import("@/pages/SettingsPage").then((module) => ({ default: module.SettingsPage })));
 
 function PageLoader() {
@@ -41,8 +39,6 @@ export default function App() {
           <Route path="/farmers" element={<FarmersPage />} />
           <Route path="/travellers" element={<TravellersPage />} />
           <Route path="/health" element={<HealthPage />} />
-          <Route path="/camera" element={<CameraPage />} />
-          <Route path="/files" element={<FilesPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

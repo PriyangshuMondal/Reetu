@@ -32,6 +32,14 @@ const envSchema = z.object({
       "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services"
     ),
 
+  // OpenWeatherMap air pollution and UV APIs
+  OPENWEATHER_API_KEY: z.string().default(""),
+
+  OPENWEATHER_API_BASE_URL: z
+    .string()
+    .url()
+    .default("https://api.openweathermap.org"),
+
   AI_PROVIDER: z
     .enum(["", "openai-compatible", "anthropic"])
     .default(""),

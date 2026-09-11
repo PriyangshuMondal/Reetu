@@ -19,11 +19,11 @@ import { ChatWindow } from "@/components/ChatWindow";
 import { useGeneralChat } from "@/hooks/useGeneralChat";
 
 const AQI_BANDS = [
-  { min: 1, label: "good", color: "text-emerald-600", bar: "bg-emerald-500" },
-  { min: 2, label: "fair", color: "text-azure", bar: "bg-azure" },
-  { min: 3, label: "moderate", color: "text-amber-600", bar: "bg-amber-500" },
-  { min: 4, label: "poor", color: "text-orange-600", bar: "bg-orange-500" },
-  { min: 5, label: "veryPoor", color: "text-rose-600", bar: "bg-rose-500" },
+  { min: 0, label: "good", color: "text-emerald-600", bar: "bg-emerald-500" },
+  { min: 51, label: "fair", color: "text-azure", bar: "bg-azure" },
+  { min: 101, label: "moderate", color: "text-amber-600", bar: "bg-amber-500" },
+  { min: 151, label: "poor", color: "text-orange-600", bar: "bg-orange-500" },
+  { min: 201, label: "veryPoor", color: "text-rose-600", bar: "bg-rose-500" },
 ];
 
 function aqiBand(aqi: number) {

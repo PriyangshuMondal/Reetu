@@ -9,6 +9,9 @@ import { corsOrigins, type ServerConfig } from "./config";
 import { errorHandler, notFoundHandler } from "./middleware/error.middleware";
 
 import { VisualCrossingProvider } from "./providers/weather/visualcrossing.provider";
+import { OpenWeatherMapProvider } from "./providers/weather/openweathermap.provider";
+import { OpenMeteoProvider } from "./providers/weather/openmeteo.provider";
+import { CompositeWeatherProvider } from "./providers/weather/composite.provider";
 import type { WeatherProvider } from "./providers/weather/weather.provider";
 
 import {
@@ -60,14 +63,30 @@ export function createApp(
 
   app.disable("x-powered-by");
 
+  const visualCrossingProvider = config.WEATHER_API_KEY
+    ? new VisualCrossingProvider({
+        apiKey: config.WEATHER_API_KEY,
+        baseUrl: config.WEATHER_API_BASE_URL,
+      })
+    : null;
+  const openWeatherMapProvider = config.OPENWEATHER_API_KEY
+    ? new OpenWeatherMapProvider({
+        apiKey: config.OPENWEATHER_API_KEY,
+        baseUrl: config.OPENWEATHER_API_BASE_URL,
+      })
+    : null;
+  const openMeteoProvider = new OpenMeteoProvider();
+  const enrichmentProvider = openWeatherMapProvider ?? openMeteoProvider;
+
   const weatherProvider: WeatherProvider | null =
     deps.weatherProvider !== undefined
       ? deps.weatherProvider
-      : config.WEATHER_API_KEY
-        ? new VisualCrossingProvider({
-            apiKey: config.WEATHER_API_KEY,
-            baseUrl: config.WEATHER_API_BASE_URL,
-          })
+      : visualCrossingProvider
+        ? new CompositeWeatherProvider(
+            visualCrossingProvider,
+            enrichmentProvider,
+            openWeatherMapProvider ? openMeteoProvider : undefined,
+          )
         : null;
 
   const aiProvider: AIProvider | null =

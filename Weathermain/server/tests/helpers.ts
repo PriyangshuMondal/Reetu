@@ -13,6 +13,8 @@ export function testConfig(
     WEATHER_API_KEY: "test-key",
     WEATHER_API_BASE_URL:
       "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services",
+    OPENWEATHER_API_KEY: "",
+    OPENWEATHER_API_BASE_URL: "https://api.openweathermap.org",
 
     AI_PROVIDER: "openai-compatible",
     AI_API_KEY: "test-ai-key",

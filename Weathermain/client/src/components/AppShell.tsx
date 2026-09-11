@@ -1,9 +1,7 @@
 import {
   AlertTriangle,
   BookOpen,
-  Camera,
   CloudSun,
-  FileImage,
   Home,
   Loader2,
   MapPin,
@@ -47,8 +45,6 @@ const NAV_ITEMS: NavItem[] = [
   { to: "/travellers", labelKey: "nav.travellers", icon: Plane },
   { to: "/health", labelKey: "nav.health", icon: HeartPulse },
   { to: "/chat", labelKey: "nav.chat", icon: MessageSquare },
-  { to: "/camera", labelKey: "nav.camera", icon: Camera },
-  { to: "/files", labelKey: "nav.files", icon: FileImage },
   { to: "/settings", labelKey: "nav.settings", icon: Settings, end: true },
 ];
 
